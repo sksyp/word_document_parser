@@ -11,6 +11,7 @@ def main():
     document_read = raw_input("Enter file name or path\n")
     document = Document(document_read)
     num = 1
+    count_sub_heading = 0
     for para in document.paragraphs:
         name = "Topic" + str(num -1) + ".docx"
         name1 = "Topic" + str(num - 1) + ".txt"
@@ -31,10 +32,13 @@ def main():
             doc = Document()
             doc.add_heading("/*" + para.text + "*/", sty)
             num = num + 1
+            count_sub_heading = 0
         elif para.style.name != 'Heading 1' and para.style.name.startswith('Heading'):
+            count_sub_heading = count_sub_heading + 1
             sty = int(para.style.name[8])
-            doc.add_heading("/*" + para.text + "*/", sty)
-        else:
+            if count_sub_heading <= 2:
+                doc.add_heading("/*" + para.text + "*/", sty)
+        elif count_sub_heading <= 2:
             doc.add_paragraph(para.text)
     doc.save(os.path.join('word_parser_docx_file', name))
     text1 = docx2txt.process(name3)
